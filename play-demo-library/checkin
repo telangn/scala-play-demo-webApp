@@ -1,0 +1,10 @@
+{
+  "status" : 200,
+  "book" : {
+    "id" : 1,
+    "title" : "Moby Dick",
+    "author" : "Herman Melville",
+    "available" : true
+  },
+  "message" : "Book checked back in!"
+}

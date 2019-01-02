@@ -1,0 +1,16 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                   controllers.Application.index
+
+# Books
+GET /books                  controllers.Books.getBooks
+GET /books/search           controllers.Books.search(author:Option[String], title:Option[String])
+POST /book/:id/checkout     controllers.Books.checkout(id: Int)
+POST /book/:id/checkin      controllers.Books.checkin(id: Int)
+
+# Customers
+POST /customer/new          controllers.Customers.addCustomer
+GET /customer/:id           controllers.Customers.getCustomer(id: Int)
