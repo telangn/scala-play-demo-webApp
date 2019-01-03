@@ -1,20 +1,16 @@
 package controllers
 
 import akka.http.scaladsl.model.StatusCodes
-import org.scalatest.Matchers
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Millis, Seconds, Span}
 import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.ws._
-import play.api.test._
-
 import scala.concurrent.Future
+//import scala.concurrent._
+//import ExecutionContext.Implicits.global
 
-import scala.concurrent._
-import ExecutionContext.Implicits.global
-
-class ApplicationIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with ScalaFutures with Matchers {
+class ApplicationIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with ScalaFutures {
 
   val ws = app.injector.instanceOf[WSClient]
 
@@ -24,17 +20,17 @@ class ApplicationIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with 
 
   "Application" should {
 
-    "be reachable" in new WithServer {
+    "be reachable" in  {
 
-      val response: Future[WSResponse] = ws.url("http://localhost:" + port).get() //1
+      val response: Future[WSResponse] = ws.url("http://localhost:" + 9000).get() //1
 
-      whenReady(response.map(response =>
-        response.status shouldBe StatusCodes.OK
-      )) //2
+      whenReady(response) { response =>
+        response.status mustBe StatusCodes.OK.intValue
+      } //2
 
-      whenReady(response.map(response =>
-        response.body should contain("Welcome to my Community Library!")
-      )) //3
+      whenReady(response) { response =>
+        response.body must equal("Welcome to my Community Library!")
+      } //3
     }
   }
 }
