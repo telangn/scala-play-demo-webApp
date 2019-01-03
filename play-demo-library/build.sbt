@@ -13,3 +13,4 @@ libraryDependencies ++= Seq(
 )
 
 libraryDependencies += specs2 % Test
+libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "3.1.2" % "test"
