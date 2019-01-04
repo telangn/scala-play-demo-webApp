@@ -7,8 +7,7 @@ import org.scalatestplus.play.PlaySpec
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
 import play.api.libs.ws._
 import scala.concurrent.Future
-//import scala.concurrent._
-//import ExecutionContext.Implicits.global
+
 
 class ApplicationIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with ScalaFutures {
 

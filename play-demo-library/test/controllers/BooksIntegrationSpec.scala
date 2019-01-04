@@ -13,8 +13,6 @@ import play.api.libs.json._
 import play.api.libs.ws._
 import play.api.test.WithServer
 import scala.concurrent.Future
-//import scala.concurrent._
-//import ExecutionContext.Implicits.global
 
 
 class BooksIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with ScalaFutures  {
@@ -33,6 +31,7 @@ class BooksIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with ScalaF
     PatienceConfig(timeout = Span(20, Seconds), interval = Span(1000, Millis))
 
   "Books Controller" should {
+
     "Provide access to all books" in  {
 
       val response: Future[WSResponse] = ws.url(Localhost + 9000 + "/books").get()
@@ -68,6 +67,7 @@ class BooksIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with ScalaF
     }
 
     "Return search results when given a title" in {
+
       val response: Future[WSResponse] = searchHelper(9000, ("title", "galaxy"))
 
       whenReady(response) { response =>
@@ -76,6 +76,7 @@ class BooksIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with ScalaF
     }
 
     "Return search results when given an author and title" in {
+
       val response: Future[WSResponse] = searchHelper(9000, ("title", "miserables"), ("author", "hugo"))
 
       whenReady(response) { response =>
@@ -84,6 +85,7 @@ class BooksIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with ScalaF
     }
 
     "Return an empty list when no search results found" in {
+
       val response = searchHelper(9000, ("author", "wolfe"))
 
       whenReady(response) { response =>
@@ -92,7 +94,8 @@ class BooksIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with ScalaF
     }
 
     "Check out books" in {
-      LibraryRepository.getBook(1).get.available = true //1
+
+//      LibraryRepository.getBook(1).get.available = true //1
 
       val response: Future[WSResponse] = ws.url(Localhost + 9000 + "/book/1/checkout")
         .post("") //2
@@ -105,13 +108,14 @@ class BooksIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with ScalaF
         (response.json \ "book").as[Book].available mustBe false //3
       }
 
-      LibraryRepository.getBook(1).get.available mustBe false //4
+//      LibraryRepository.getBook(1).get.available mustBe false //4
     }
 
-    "Checkin books" in new WithServer {
-      LibraryRepository.getBook(1).get.available = false
+    "Checkin books" in {
 
-      val response: Future[WSResponse] = ws.url(Localhost + port + "/book/1/checkin")
+//      LibraryRepository.getBook(1).get.available = false
+
+      val response: Future[WSResponse] = ws.url(Localhost + 9000 + "/book/1/checkin")
         .post("")
 
       whenReady(response) { response =>
@@ -122,11 +126,13 @@ class BooksIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with ScalaF
         (response.json \ "book").as[Book].available mustBe true //3
       }
 
-      LibraryRepository.getBook(1).get.available mustBe true
+//      LibraryRepository.getBook(1).get.available mustBe true
+
     }
 
-    "Returns an error when checking in/out a nonexistent book" +
+    "Returns an error when checking in/out a nonexistent book " +
       "a book that does not exist" in {
+
       val responseCheckIn: Future[WSResponse] = ws.url(Localhost + 9000 + "/book/99999/checkin")
         .post("")
 
@@ -143,7 +149,9 @@ class BooksIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with ScalaF
     }
 
     "Returns an error when repeating a checkin/out" in {
-      LibraryRepository.getBook(1).get.available = true
+
+//      LibraryRepository.getBook(1).get.available = true
+
       val responseCheckOut: Future[WSResponse] = ws.url(Localhost + 9000 + "/book/1/checkout")
         .post("")
 
