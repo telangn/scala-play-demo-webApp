@@ -15,6 +15,10 @@ class Books extends Controller {
     Ok(Json.prettyPrint(Json.obj("books" -> LibraryRepository.getBooks)))
   }
 
+  def getBookCount = Action { request =>
+    Ok(Json.prettyPrint(Json.obj("count" -> LibraryRepository.getBookCount)))
+  }
+
   def search(author: Option[String], title: Option[String]) = Action { request =>
     val results = {
       if (author.isDefined && title.isDefined) {

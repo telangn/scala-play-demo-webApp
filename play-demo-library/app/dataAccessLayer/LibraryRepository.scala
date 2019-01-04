@@ -39,7 +39,11 @@ object LibraryRepository {
 
   def getBook(id: Int): Option[Book] = books.find(b => b.id == id)
 
+  def getBookCount: Int = books.size
+
   def getCustomer(id: Int): Option[Customer] = customers.find(c => c.id == id)
+
+  def getCustomerCount: Int = customers.size
 
   def addCustomer(name: String, address: String): Customer = {
     val nextId = customers.maxBy(_.id).id + 1
