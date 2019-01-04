@@ -24,12 +24,10 @@ class ApplicationIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with 
       val response: Future[WSResponse] = ws.url("http://localhost:" + 9000).get() //1
 
       whenReady(response) { response =>
-        response.status mustBe StatusCodes.OK.intValue
-      } //2
+        response.status mustBe StatusCodes.OK.intValue //2
+        response.body must equal("Welcome to my Community Library!") //3
+      }
 
-      whenReady(response) { response =>
-        response.body must equal("Welcome to my Community Library!")
-      } //3
     }
   }
 }

@@ -31,25 +31,20 @@ class CustomersIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with Sc
 
   "The Customers controller" should {
 
-    "Provide access to a single customer" in  {
+    "Provide access to a single customer" in {
 
       val response: Future[WSResponse] = ws.url(Localhost + 9000 + "/customer/1").get()
 
       whenReady(response) { response =>
         response.status mustBe StatusCodes.OK.intValue
-      }
-
-      whenReady(response) { response =>
         (response.json \ "customer").as[Customer].name mustBe "Bruce Wayne"
-      }
-
-      whenReady(response) { response =>
         (response.json \ "customer").as[Customer].address mustBe "1 Wayne Enterprise Ave, Gotham"
       }
+
     }
 
     "Return an error when a " +
-      "non-existent customer is requested" in  {
+      "non-existent customer is requested" in {
 
       val response: Future[WSResponse] = ws.url(Localhost + 9000 + "/customer/99999").get()
 
@@ -58,27 +53,27 @@ class CustomersIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with Sc
       }
     }
 
-    "Create new users" in  {
+    "Create new users" in {
 
       val newCustomerName = "Joe Reader"
       val newCustomerAddress = "123 Elm St."
 
-//      val currentCustomerCount = LibraryRepository.customers.size //1
+      //      val currentCustomerCount = LibraryRepository.customers.size //1
 
       val response = ws.url(Localhost + 9000 + "/customer/new")
         .post(Map("name" -> Seq(newCustomerName),
           "address" -> Seq(newCustomerAddress)))
 
-      whenReady(response){response =>
+      whenReady(response) { response =>
         response.status mustBe StatusCodes.Created.intValue
       }
 
-//      LibraryRepository.customers.size must equal(currentCustomerCount + 1) //2
+      //      LibraryRepository.customers.size must equal(currentCustomerCount + 1) //2
 
-//      val newCustomer = LibraryRepository.customers.maxBy(c => c.id)
-//
-//      newCustomer.name must equal(newCustomerName) //3
-//      newCustomer.address must equal(newCustomerAddress) //3
+      //      val newCustomer = LibraryRepository.customers.maxBy(c => c.id)
+      //
+      //      newCustomer.name must equal(newCustomerName) //3
+      //      newCustomer.address must equal(newCustomerAddress) //3
     }
 
     "Return the newly created user" in {
@@ -92,17 +87,8 @@ class CustomersIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with Sc
 
       whenReady(response) { response =>
         response.status mustBe StatusCodes.Created.intValue
-      }
-
-      whenReady(response) { response =>
         (response.json \ "customer").as[Customer].name mustBe newCustomerName
-      }
-
-      whenReady(response) { response =>
         (response.json \ "customer").as[Customer].address mustBe newCustomerAddress
-      }
-
-      whenReady(response) { response =>
         (response.json \ "customer").as[Customer].id mustBe 5
       }
 
