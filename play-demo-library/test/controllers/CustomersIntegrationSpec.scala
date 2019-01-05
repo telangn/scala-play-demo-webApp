@@ -1,7 +1,6 @@
 package controllers
 
 import akka.http.scaladsl.model.StatusCodes
-import dataAccessLayer.LibraryRepository
 import model.Customer
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Millis, Seconds, Span}
@@ -60,12 +59,19 @@ class CustomersIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with Sc
 
       //      val currentCustomerCount = LibraryRepository.customers.size //1
 
+
       val response = ws.url(Localhost + 9000 + "/customer/new")
         .post(Map("name" -> Seq(newCustomerName),
           "address" -> Seq(newCustomerAddress)))
 
       whenReady(response) { response =>
         response.status mustBe StatusCodes.Created.intValue
+      }
+
+      val currentCustomerCount = ws.url(Localhost + 9000 + "/customers/count").get()
+
+      whenReady(currentCustomerCount) { count =>
+        (count.json \ "count").as[Int] mustBe 4
       }
 
       //      LibraryRepository.customers.size must equal(currentCustomerCount + 1) //2
@@ -90,6 +96,12 @@ class CustomersIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with Sc
         (response.json \ "customer").as[Customer].name mustBe newCustomerName
         (response.json \ "customer").as[Customer].address mustBe newCustomerAddress
         (response.json \ "customer").as[Customer].id mustBe 5
+      }
+
+      val currentCustomerCount = ws.url(Localhost + 9000 + "/customers/count").get()
+
+      whenReady(currentCustomerCount) { count =>
+        (count.json \ "count").as[Int] mustBe 5
       }
 
     }

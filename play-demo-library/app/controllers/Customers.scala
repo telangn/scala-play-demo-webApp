@@ -42,12 +42,8 @@ class Customers extends Controller {
     )))
   }
 
-  def getCustomerCount = Action { implicit request =>
-    val customerCount = LibraryRepository.getCustomerCount
-    Ok(Json.prettyPrint(Json.obj(
-      "status" -> "200",
-      "count" -> customerCount
-    )))
+  def getCustomerCount = Action { request =>
+    Ok(Json.prettyPrint(Json.obj("count" -> LibraryRepository.getCustomerCount)))
   }
 
 }

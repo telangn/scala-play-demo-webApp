@@ -50,6 +50,21 @@ class Books extends Controller {
     }
   }
 
+  def availability(id: Int) = Action { request =>
+    val bookOpt = LibraryRepository.getBook(id)
+    if (bookOpt.isEmpty) {
+      BadRequest(Json.prettyPrint(Json.obj(
+        "status" -> "400",
+        "message" -> s"Book not found with id $id.")))
+    } else {
+      Ok(Json.prettyPrint(Json.obj(
+        "status" -> 200,
+        "availability" -> bookOpt.get.available
+      )))
+    }
+  }
+
+
   def checkin(id: Int) = Action { request =>
     val bookOpt = LibraryRepository.getBook(id)
     if (bookOpt.isEmpty) {

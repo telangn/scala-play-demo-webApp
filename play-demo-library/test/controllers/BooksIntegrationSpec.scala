@@ -1,7 +1,6 @@
 package controllers
 
 import akka.http.scaladsl.model.StatusCodes
-import dataAccessLayer.LibraryRepository
 import model.Book
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.time.{Millis, Seconds, Span}
@@ -94,12 +93,24 @@ class BooksIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with ScalaF
 
       //      LibraryRepository.getBook(1).get.available = true //1
 
+      val availability = ws.url(Localhost + 9000 + "/book/1/availability").get()
+
+      whenReady(availability) { response =>
+        (response.json \ "availability").as[Boolean] mustBe true
+      }
+
       val response: Future[WSResponse] = ws.url(Localhost + 9000 + "/book/1/checkout")
         .post("") //2
 
       whenReady(response) { response =>
         response.status mustBe StatusCodes.OK.intValue
         (response.json \ "book").as[Book].available mustBe false //3
+      }
+
+      val newAvailability = ws.url(Localhost + 9000 + "/book/1/availability").get()
+
+      whenReady(newAvailability) { response =>
+        (response.json \ "availability").as[Boolean] mustBe false
       }
 
       //      LibraryRepository.getBook(1).get.available mustBe false //4
@@ -109,12 +120,24 @@ class BooksIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with ScalaF
 
       //      LibraryRepository.getBook(1).get.available = false
 
+      val availability = ws.url(Localhost + 9000 + "/book/1/availability").get()
+
+      whenReady(availability) { response =>
+        (response.json \ "availability").as[Boolean] mustBe false
+      }
+
       val response: Future[WSResponse] = ws.url(Localhost + 9000 + "/book/1/checkin")
         .post("")
 
       whenReady(response) { response =>
         response.status mustBe StatusCodes.OK.intValue
         (response.json \ "book").as[Book].available mustBe true //3
+      }
+
+      val newAvailability = ws.url(Localhost + 9000 + "/book/1/availability").get()
+
+      whenReady(newAvailability) { response =>
+        (response.json \ "availability").as[Boolean] mustBe true
       }
 
       //      LibraryRepository.getBook(1).get.available mustBe true
@@ -142,6 +165,12 @@ class BooksIntegrationSpec extends PlaySpec with GuiceOneAppPerSuite with ScalaF
     "Returns an error when repeating a checkin/out" in {
 
       //      LibraryRepository.getBook(1).get.available = true
+
+      val availability = ws.url(Localhost + 9000 + "/book/1/availability").get()
+
+      whenReady(availability) { response =>
+        (response.json \ "availability").as[Boolean] mustBe true
+      }
 
       val responseCheckOut: Future[WSResponse] = ws.url(Localhost + 9000 + "/book/1/checkout")
         .post("")
